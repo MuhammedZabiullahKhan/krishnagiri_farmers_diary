@@ -78,7 +78,27 @@
         .btn-primary:active {
             transform: scale(0.98);
         }
-        
+        /* Add to your existing styles */
+#marketPricesList {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+}
+
+#marketPricesList::-webkit-scrollbar {
+    width: 4px;
+}
+
+#marketPricesList::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 10px;
+}
+
+#marketPricesList::-webkit-scrollbar-thumb {
+    background: #10b981;
+    border-radius: 10px;
+}
         .install-btn {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             animation: pulse 2s infinite;
