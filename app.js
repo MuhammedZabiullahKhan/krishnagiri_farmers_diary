@@ -137,8 +137,8 @@ function displayMarketPrices(prices, source) {
     const container = document.getElementById('marketPricesList');
     if (!container) return;
     
-    // Take top 16 vegetables for display
-    const priceEntries = Object.entries(prices).slice(0, 16);
+    // Show ALL vegetables - no limit
+    const priceEntries = Object.entries(prices);
     
     if (priceEntries.length === 0) {
         container.innerHTML = `<div class="text-center text-gray-500 py-4 col-span-2 md:col-span-4">
@@ -147,21 +147,23 @@ function displayMarketPrices(prices, source) {
         return;
     }
     
+    // Use grid with responsive columns
     container.innerHTML = priceEntries.map(([crop, price]) => `
         <div class="bg-green-50 rounded-xl p-2 text-center card-hover">
             <p class="text-green-700 font-bold text-lg">₹${price}</p>
-            <p class="text-[10px] text-gray-500 truncate">${crop.substring(0, 20)}</p>
+            <p class="text-[10px] text-gray-500 truncate" title="${crop}">${crop.substring(0, 20)}</p>
         </div>
     `).join('');
     
+    // Add horizontal scroll hint if needed
     const noteSpan = document.getElementById('priceNote');
-    if (noteSpan) {
+    if (noteSpan && priceEntries.length > 16) {
         if (currentLanguage === 'tamil') {
-            noteSpan.innerHTML = `📊 ${source} | ஹொசூர் மார்க்கெட் | ${new Date().toLocaleDateString()}`;
+            noteSpan.innerHTML = `📊 ${source} | ${priceEntries.length} பொருட்கள் | ← → ஸ்க்ரோல் செய்யவும்`;
         } else if (currentLanguage === 'telugu') {
-            noteSpan.innerHTML = `📊 ${source} | హోసూర్ మార్కెట్ | ${new Date().toLocaleDateString()}`;
+            noteSpan.innerHTML = `📊 ${source} | ${priceEntries.length} వస్తువులు | ← → స్క్రోల్ చేయండి`;
         } else {
-            noteSpan.innerHTML = `📊 ${source} | Hosur Market | ${new Date().toLocaleDateString()}`;
+            noteSpan.innerHTML = `📊 ${source} | ${priceEntries.length} items | ← → Scroll for more`;
         }
     }
 }
