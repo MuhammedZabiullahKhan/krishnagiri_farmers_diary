@@ -7,7 +7,7 @@ let db;
 let currentLanguage = 'tamil';
 let editingEntryId = null;
 let currentFilterMonth = null;
-let currentServerUrl = 'http://localhost:5000';
+let currentServerUrl = 'https://krishnagiri-farmers-diary.onrender.com';
 
 const CONTACT_EMAIL = '0gbtechintel@gmail.com';
 const CONTACT_PHONE = '9087119440';
