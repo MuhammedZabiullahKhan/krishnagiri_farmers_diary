@@ -1,6 +1,7 @@
 // Krishnagiri Farmer's Diary - Complete Application
-// 3 Languages: Tamil, Telugu, English
-// NO FAKE DATA - Only real API data or clear error messages
+// 3 Languages: Tamil, Telugu, English - 100% translation
+// Transport added to Expenses
+// Save as PDF feature
 // Created by Shri Muhammed Zabiullah Khan | PrimeSys Solutions
 
 let db;
@@ -8,9 +9,104 @@ let currentLanguage = 'tamil';
 let editingEntryId = null;
 let currentFilterMonth = null;
 let currentServerUrl = 'https://krishnagiri-farmers-diary.onrender.com';
+let currentMarket = 'hosur';
 
 const CONTACT_EMAIL = '0gbtechintel@gmail.com';
 const CONTACT_PHONE = '9087119440';
+
+// Vegetable name translations
+const vegetableTranslations = {
+    tamil: {
+        "Tomato": "தக்காளி",
+        "Onion": "வெங்காயம்",
+        "Potato": "உருளைக்கிழங்கு",
+        "Brinjal": "கத்தரிக்காய்",
+        "Carrot": "கேரட்",
+        "Cabbage": "முட்டைக்கோஸ்",
+        "Cauliflower": "காலிஃபிளவர்",
+        "Beetroot": "பீட்ரூட்",
+        "Ladies Finger": "வெண்டைக்காய்",
+        "Garlic": "பூண்டு",
+        "Ginger": "இஞ்சி",
+        "Green Chilli": "பச்சை மிளகாய்",
+        "Coconut": "தேங்காய்",
+        "Pumpkin": "பூசணி",
+        "Radish": "முள்ளங்கி",
+        "Beans": "பீன்ஸ்",
+        "Cucumber": "வெள்ளரிக்காய்",
+        "Bitter Gourd": "பாகற்காய்",
+        "Drumstick": "முருங்கைக்காய்",
+        "Mango": "மாம்பழம்",
+        "Amaranth Leaves": "சிறு கீரை",
+        "Amla": "நெல்லிக்காய்",
+        "Ash gourd": "சாம்பல் பூசணிக்காய்",
+        "Baby Corn": "சிறிய மக்காச்சோளம்",
+        "Banana Flower": "வாழைப்பூ",
+        "Bottle Gourd": "சுரைக்காய்",
+        "Broad Beans": "அவரைக்காய்",
+        "Butter Beans": "பட்டர் பீன்ஸ்",
+        "Capsicum": "குடைமிளகாய்",
+        "Cluster beans": "கொத்தவரை",
+        "Colocasia": "சேப்பங்கிழங்கு",
+        "Colocasia Leaves": "சேப்பங்கிழங்கு கீரை",
+        "Coriander Leaves": "கொத்தமல்லி",
+        "Corn": "மக்காச்சோளம்",
+        "Curry Leaves": "கறிவேப்பிலை",
+        "Dill Leaves": "வெந்தயம் இலைகள்",
+        "Elephant Yam": "சேனைக்கிழங்கு",
+        "Fenugreek Leaves": "வெந்தயக்கீரை",
+        "French Beans": "பிரஞ்சு பீன்ஸ்",
+        "Green Peas": "பச்சை பட்டாணி",
+        "Ivy Gourd": "கோவைக்காய்",
+        "Lemon": "எலுமிச்சை",
+        "Mango Raw": "மாங்காய்",
+        "Mint Leaves": "புதினா",
+        "Mushroom": "காளான்",
+        "Mustard Leaves": "கடுகு இலைகள்",
+        "Onion Big": "பெரிய வெங்காயம்",
+        "Onion Green": "பச்சை வெங்காயம்",
+        "Onion Small": "சின்ன வெங்காயம்",
+        "Raw Banana": "வாழைக்காய்",
+        "Ridge Gourd": "பீர்க்கங்காய்",
+        "Shallot": "சின்ன வெங்காயம்",
+        "Snake Gourd": "புடலங்காய்",
+        "Sorrel Leaves": "புளிச்ச கீரை",
+        "Spinach": "கீரை",
+        "Sweet Potato": "இனிப்பு உருளைக்கிழங்கு"
+    },
+    telugu: {
+        "Tomato": "టమోటా",
+        "Onion": "ఉల్లిపాయ",
+        "Potato": "బంగాళదుంప",
+        "Brinjal": "వంకాయ",
+        "Carrot": "క్యారెట్",
+        "Cabbage": "క్యాబేజీ",
+        "Cauliflower": "కాలీఫ్లవర్",
+        "Beetroot": "బీట్రూట్",
+        "Ladies Finger": "బెండకాయ",
+        "Garlic": "వెల్లుల్లి",
+        "Ginger": "అల్లం",
+        "Green Chilli": "పచ్చి మిరపకాయ",
+        "Coconut": "కొబ్బరి",
+        "Pumpkin": "గుమ్మడికాయ",
+        "Radish": "ముల్లంగి",
+        "Beans": "బీన్స్",
+        "Cucumber": "దోసకాయ",
+        "Bitter Gourd": "కాకరకాయ",
+        "Drumstick": "మునగకాయ",
+        "Mango": "మామిడి"
+    },
+    english: {}
+};
+
+function translateVegetable(vegName, lang) {
+    if (lang === 'tamil' && vegetableTranslations.tamil[vegName]) {
+        return vegetableTranslations.tamil[vegName];
+    } else if (lang === 'telugu' && vegetableTranslations.telugu[vegName]) {
+        return vegetableTranslations.telugu[vegName];
+    }
+    return vegName;
+}
 
 // Load saved server URL
 function loadServerUrl() {
@@ -27,9 +123,206 @@ function updateApiServerUrl(url) {
     localStorage.setItem('api_server_url', url);
 }
 
+function loadMarketPreference() {
+    const saved = localStorage.getItem('preferred_market');
+    if (saved && (saved === 'hosur' || saved === 'krishnagiri')) {
+        currentMarket = saved;
+        const marketSelect = document.getElementById('marketSelect');
+        if (marketSelect) marketSelect.value = saved;
+    }
+}
+
 // ============================================ //
-// FETCH REAL PRICES FROM YOUR PYTHON API SERVER //
+// PDF REPORT GENERATION                        //
 // ============================================ //
+
+async function downloadPDFReport() {
+    const entries = await getAllEntries();
+    const t = translations[currentLanguage];
+    
+    if (entries.length === 0) {
+        showToast(currentLanguage === 'tamil' ? 'PDF உருவாக்க எந்த பதிவுகளும் இல்லை' : 
+                   currentLanguage === 'telugu' ? 'PDF సృష్టించడానికి ఎంట్రీలు లేవు' : 
+                   'No entries to create PDF');
+        return;
+    }
+    
+    // Calculate totals
+    let totalIncome = 0, totalExpense = 0;
+    entries.forEach(entry => {
+        if (entry.type === 'income') totalIncome += entry.amount;
+        else totalExpense += entry.amount;
+    });
+    const balance = totalIncome - totalExpense;
+    
+    // Create HTML for PDF
+    const reportHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Farmer's Diary Report</title>
+            <style>
+                body {
+                    font-family: 'Inter', 'Noto Sans Tamil', 'Noto Sans Telugu', sans-serif;
+                    padding: 20px;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                    border-bottom: 2px solid #065f46;
+                    padding-bottom: 10px;
+                }
+                .header h1 {
+                    color: #065f46;
+                    margin: 0;
+                }
+                .header p {
+                    color: #666;
+                    margin: 5px 0;
+                }
+                .summary {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px;
+                    gap: 10px;
+                }
+                .summary-card {
+                    flex: 1;
+                    background: #f0fdf4;
+                    padding: 10px;
+                    border-radius: 8px;
+                    text-align: center;
+                }
+                .summary-card h3 {
+                    margin: 0;
+                    font-size: 14px;
+                    color: #666;
+                }
+                .summary-card p {
+                    margin: 5px 0 0;
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #065f46;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+                .income-row {
+                    border-left: 3px solid #10b981;
+                }
+                .expense-row {
+                    border-left: 3px solid #ef4444;
+                }
+                .footer {
+                    margin-top: 30px;
+                    text-align: center;
+                    font-size: 12px;
+                    color: #999;
+                    border-top: 1px solid #ddd;
+                    padding-top: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>${t.appTitle}</h1>
+                <p>${t.subtitleText}</p>
+                <p>${new Date().toLocaleDateString()}</p>
+            </div>
+            
+            <div class="summary">
+                <div class="summary-card">
+                    <h3>${t.totalIncomeLabel || 'Total Income'}</h3>
+                    <p>₹${totalIncome.toLocaleString()}</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${t.totalExpenseLabel || 'Total Expense'}</h3>
+                    <p>₹${totalExpense.toLocaleString()}</p>
+                </div>
+                <div class="summary-card">
+                    <h3>${t.netBalanceLabel || 'Net Balance'}</h3>
+                    <p>₹${balance.toLocaleString()}</p>
+                </div>
+            </div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>${t.dateLabel || 'Date'}</th>
+                        <th>${t.typeLabel || 'Type'}</th>
+                        <th>${t.categoryLabel || 'Category'}</th>
+                        <th>${t.amountLabel || 'Amount (₹)'}</th>
+                        <th>${t.notesLabel || 'Notes'}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${entries.sort((a,b) => new Date(b.date) - new Date(a.date)).map(entry => `
+                        <tr class="${entry.type === 'income' ? 'income-row' : 'expense-row'}">
+                            <td>${entry.date}</td>
+                            <td>${entry.type === 'income' ? (t.incomeText || 'Income') : (t.expenseText || 'Expense')}</td>
+                            <td>${entry.category}</td>
+                            <td>₹${entry.amount.toLocaleString()}</td>
+                            <td>${entry.notes || '-'}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            
+            <div class="footer">
+                <p>Generated by Krishnagiri Farmer's Diary | PrimeSys Solutions</p>
+                <p>Contact: ${CONTACT_PHONE} | ${CONTACT_EMAIL}</p>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    // Convert HTML to PDF and download
+    const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `farmers_diary_report_${new Date().toISOString().slice(0,10)}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    
+    const element = document.createElement('div');
+    element.innerHTML = reportHtml;
+    document.body.appendChild(element);
+    html2pdf().set(opt).from(element).save().then(() => {
+        document.body.removeChild(element);
+        showToast(t.pdfSaved || 'PDF saved successfully!');
+    });
+}
+
+// ============================================ //
+// FETCH REAL PRICES FROM BACKEND API          //
+// ============================================ //
+
+async function changeMarket() {
+    const marketSelect = document.getElementById('marketSelect');
+    currentMarket = marketSelect.value;
+    localStorage.setItem('preferred_market', currentMarket);
+    
+    const pricesContainer = document.getElementById('marketPricesList');
+    if (pricesContainer) {
+        pricesContainer.innerHTML = '<div class="text-center text-gray-500 py-4 col-span-2 md:col-span-4"><i class="fas fa-spinner fa-spin mr-2"></i>Fetching prices...</div>';
+    }
+    await fetchRealMarketPrices();
+    
+    const marketName = currentMarket === 'hosur' ? 'Hosur' : 'Krishnagiri';
+    showToast(`Switched to ${marketName} market`);
+}
 
 async function fetchRealMarketPrices() {
     const pricesContainer = document.getElementById('marketPricesList');
@@ -40,33 +333,28 @@ async function fetchRealMarketPrices() {
     if (!pricesContainer) return;
     
     if (errorContainer) errorContainer.classList.add('hidden');
-    pricesContainer.innerHTML = '<div class="text-center text-gray-500 py-4 col-span-2 md:col-span-4"><i class="fas fa-spinner fa-spin mr-2"></i>Connecting to server...</div>';
+    pricesContainer.innerHTML = '<div class="text-center text-gray-500 py-4 col-span-2 md:col-span-4"><i class="fas fa-spinner fa-spin mr-2"></i>Fetching prices...</div>';
     
     if (refreshBtn) {
         refreshBtn.disabled = true;
         refreshBtn.style.opacity = '0.5';
-        refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
     }
     
     try {
-        const response = await fetch(`${currentServerUrl}/api/prices`);
+        const response = await fetch(`${currentServerUrl}/api/prices?market=${currentMarket}`);
         
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
         
         if (data.success && data.prices && Object.keys(data.prices).length > 0) {
-            // Success - show real prices
-            displayMarketPrices(data.prices, 'Hosur Market (Live)');
+            const marketName = currentMarket === 'hosur' ? 'Hosur Market' : 'Krishnagiri Market';
+            displayMarketPrices(data.prices, marketName);
             if (errorContainer) errorContainer.classList.add('hidden');
             
-            // Cache successful data (for offline display with warning)
-            localStorage.setItem('last_successful_prices', JSON.stringify({
+            localStorage.setItem(`${currentMarket}_prices_cache`, JSON.stringify({
                 prices: data.prices,
-                timestamp: Date.now(),
-                source: 'hosur_market_api'
+                timestamp: Date.now()
             }));
         } else {
             throw new Error('No price data received');
@@ -75,25 +363,24 @@ async function fetchRealMarketPrices() {
     } catch (error) {
         console.error('Fetch error:', error);
         
-        // Check for cached data
-        const cached = localStorage.getItem('last_successful_prices');
+        const cached = localStorage.getItem(`${currentMarket}_prices_cache`);
         if (cached) {
             const cachedData = JSON.parse(cached);
             const hoursSinceFetch = (Date.now() - cachedData.timestamp) / (1000 * 60 * 60);
             
             if (hoursSinceFetch < 24 && cachedData.prices && Object.keys(cachedData.prices).length > 0) {
-                // Show cached data with warning
-                displayMarketPrices(cachedData.prices, `Cached (${new Date(cachedData.timestamp).toLocaleDateString()})`);
+                const marketName = currentMarket === 'hosur' ? 'Hosur Market' : 'Krishnagiri Market';
+                displayMarketPrices(cachedData.prices, `${marketName} (Cached)`);
                 
                 if (errorContainer) {
                     errorContainer.classList.remove('hidden');
                     let warningMsg = '';
                     if (currentLanguage === 'tamil') {
-                        warningMsg = `⚠️ சேவர் இணைப்பு சிக்கல். ${new Date(cachedData.timestamp).toLocaleDateString()} அன்று சேமித்த விலைகளைக் காட்டுகிறது.<br><br>📞 ${CONTACT_PHONE} | ✉️ ${CONTACT_EMAIL}`;
+                        warningMsg = `⚠️ சேவர் இணைப்பு சிக்கல். சேமித்த விலைகளைக் காட்டுகிறது.<br><br>📞 ${CONTACT_PHONE} | ✉️ ${CONTACT_EMAIL}`;
                     } else if (currentLanguage === 'telugu') {
-                        warningMsg = `⚠️ సర్వర్ కనెక్షన్ సమస్య. ${new Date(cachedData.timestamp).toLocaleDateString()} న నిల్వ చేసిన ధరలను చూపిస్తోంది.<br><br>📞 ${CONTACT_PHONE} | ✉️ ${CONTACT_EMAIL}`;
+                        warningMsg = `⚠️ సర్వర్ కనెక్షన్ సమస్య. నిల్వ చేసిన ధరలను చూపిస్తోంది.<br><br>📞 ${CONTACT_PHONE} | ✉️ ${CONTACT_EMAIL}`;
                     } else {
-                        warningMsg = `⚠️ Server connection issue. Showing cached prices from ${new Date(cachedData.timestamp).toLocaleDateString()}.<br><br>📞 ${CONTACT_PHONE} | ✉️ ${CONTACT_EMAIL}`;
+                        warningMsg = `⚠️ Server connection issue. Showing cached prices.<br><br>📞 ${CONTACT_PHONE} | ✉️ ${CONTACT_EMAIL}`;
                     }
                     errorMessageSpan.innerHTML = warningMsg;
                 }
@@ -101,34 +388,28 @@ async function fetchRealMarketPrices() {
             }
         }
         
-        // No cache - show error (NO FAKE DATA)
         if (errorContainer) {
             errorContainer.classList.remove('hidden');
             let errorMsg = '';
             if (currentLanguage === 'tamil') {
-                errorMsg = `❌ சேவர் இயங்கவில்லை அல்லது இணைப்பு சிக்கல்.<br><br><strong>தீர்வு:</strong><br>• உங்கள் லேப்டாப்பில் api_server.py ஐ இயக்கவும்<br>• அதே WiFi நெட்வொர்க்கில் இணைக்கவும்<br>• அமைப்புகளில் சர்வர் URL ஐ சரிபார்க்கவும்<br><br>📞 ${CONTACT_PHONE}<br>✉️ ${CONTACT_EMAIL}`;
+                errorMsg = `❌ விலைகளைப் பெற முடியவில்லை<br><br>• இணைய இணைப்பை சரிபார்க்கவும்<br>• சிறிது நேரத்தில் மீண்டும் முயற்சிக்கவும்<br><br>📞 ${CONTACT_PHONE}<br>✉️ ${CONTACT_EMAIL}`;
             } else if (currentLanguage === 'telugu') {
-                errorMsg = `❌ సర్వర్ అమలు కావడం లేదు లేదా కనెక్షన్ సమస్య.<br><br><strong>పరిష్కారం:</strong><br>• మీ ల్యాప్టాప్‌లో api_server.py ని అమలు చేయండి<br>• అదే WiFi నెట్‌వర్క్‌కు కనెక్ట్ చేయండి<br>• సెట్టింగ్స్‌లో సర్వర్ URL ని తనిఖీ చేయండి<br><br>📞 ${CONTACT_PHONE}<br>✉️ ${CONTACT_EMAIL}`;
+                errorMsg = `❌ ధరలను పొందలేకపోయింది<br><br>• ఇంటర్నెట్ కనెక్షన్ తనిఖీ చేయండి<br>• కొంత సేపటి తర్వాత మళ్లీ ప్రయత్నించండి<br><br>📞 ${CONTACT_PHONE}<br>✉️ ${CONTACT_EMAIL}`;
             } else {
-                errorMsg = `❌ Server not running or connection issue.<br><br><strong>Solution:</strong><br>• Run api_server.py on your laptop<br>• Connect to same WiFi network<br>• Check server URL in Settings<br><br>📞 ${CONTACT_PHONE}<br>✉️ ${CONTACT_EMAIL}`;
+                errorMsg = `❌ Unable to fetch prices<br><br>• Check your internet connection<br>• Try again in a few minutes<br><br>📞 ${CONTACT_PHONE}<br>✉️ ${CONTACT_EMAIL}`;
             }
             errorMessageSpan.innerHTML = errorMsg;
         }
         
-        // Show empty state with no fake data
         pricesContainer.innerHTML = `<div class="text-center py-6 col-span-2 md:col-span-4">
-            <i class="fas fa-plug text-gray-400 text-4xl mb-2"></i>
-            <p class="text-gray-500 text-sm">${currentLanguage === 'tamil' ? 'சேவர் இணைப்பு இல்லை' : currentLanguage === 'telugu' ? 'సర్వర్ కనెక్షన్ లేదు' : 'No server connection'}</p>
-            <p class="text-gray-400 text-xs mt-1">${currentLanguage === 'tamil' ? 'api_server.py ஐ இயக்கவும்' : currentLanguage === 'telugu' ? 'api_server.py ని అమలు చేయండి' : 'Run api_server.py'}</p>
+            <i class="fas fa-cloud-sun-rain text-gray-400 text-4xl mb-2"></i>
+            <p class="text-gray-500 text-sm">${currentLanguage === 'tamil' ? 'விலைகள் கிடைக்கவில்லை' : currentLanguage === 'telugu' ? 'ధరలు అందుబాటులో లేవు' : 'Prices unavailable'}</p>
         </div>`;
         
     } finally {
         if (refreshBtn) {
             refreshBtn.disabled = false;
             refreshBtn.style.opacity = '1';
-            refreshBtn.innerHTML = '<i class="fas fa-sync-alt text-xs"></i> <span id="refreshPricesBtn">Refresh</span>';
-            const refreshSpan = refreshBtn.querySelector('span');
-            if (refreshSpan) refreshSpan.textContent = currentLanguage === 'tamil' ? 'புதுப்பி' : (currentLanguage === 'telugu' ? 'రిఫ్రెష్' : 'Refresh');
         }
     }
 }
@@ -137,7 +418,6 @@ function displayMarketPrices(prices, source) {
     const container = document.getElementById('marketPricesList');
     if (!container) return;
     
-    // Show ALL vegetables - no limit
     const priceEntries = Object.entries(prices);
     
     if (priceEntries.length === 0) {
@@ -147,17 +427,18 @@ function displayMarketPrices(prices, source) {
         return;
     }
     
-    // Use grid with responsive columns
-    container.innerHTML = priceEntries.map(([crop, price]) => `
-        <div class="bg-green-50 rounded-xl p-2 text-center card-hover">
-            <p class="text-green-700 font-bold text-lg">₹${price}</p>
-            <p class="text-[10px] text-gray-500 truncate" title="${crop}">${crop.substring(0, 20)}</p>
-        </div>
-    `).join('');
+    container.innerHTML = priceEntries.map(([crop, price]) => {
+        const translatedCrop = translateVegetable(crop, currentLanguage);
+        return `
+            <div class="bg-green-50 rounded-xl p-2 text-center card-hover">
+                <p class="text-green-700 font-bold text-lg">₹${price}</p>
+                <p class="text-[10px] text-gray-500 truncate" title="${crop}">${translatedCrop}</p>
+            </div>
+        `;
+    }).join('');
     
-    // Add horizontal scroll hint if needed
     const noteSpan = document.getElementById('priceNote');
-    if (noteSpan && priceEntries.length > 16) {
+    if (noteSpan) {
         if (currentLanguage === 'tamil') {
             noteSpan.innerHTML = `📊 ${source} | ${priceEntries.length} பொருட்கள் | ← → ஸ்க்ரோல் செய்யவும்`;
         } else if (currentLanguage === 'telugu') {
@@ -175,6 +456,7 @@ async function refreshPrices() {
 // ============================================ //
 // COMPLETE TRANSLATIONS (Tamil, Telugu, English) //
 // ============================================ //
+
 const translations = {
     tamil: {
         settingsTitle: "அமைப்புகள்",
@@ -196,7 +478,7 @@ const translations = {
         todayIncomeLabel: "இன்றைய வருமானம்",
         todayExpenseLabel: "இன்றைய செலவு",
         monthIncomeLabel: "மாத வருமானம்",
-        monthProfitLabel: "மாத லாபம்",
+        monthProfitLabel: "மாத இருப்பு",
         marketPricesTitle: "📊 இன்றைய சந்தை விலைகள்",
         refreshPricesBtn: "புதுப்பி",
         addEntryTitle: "➕ புதிய பதிவு",
@@ -214,7 +496,16 @@ const translations = {
         updateSuccess: "✅ பதிவு புதுப்பிக்கப்பட்டது!",
         saveSuccess: "✅ பதிவு சேமிக்கப்பட்டது!",
         noAmountAlert: "⚠️ தயவுசெய்து தொகையை உள்ளிடவும்!",
-        clearConfirm: "⚠️ அனைத்து பதிவுகளையும் நீக்க வேண்டுமா?"
+        clearConfirm: "⚠️ அனைத்து பதிவுகளையும் நீக்க வேண்டுமா?",
+        pdfReportBtn: "PDF சேமி",
+        totalIncomeLabel: "மொத்த வருமானம்",
+        totalExpenseLabel: "மொத்த செலவு",
+        netBalanceLabel: "நிகர இருப்பு",
+        dateLabel: "தேதி",
+        typeLabel: "வகை",
+        incomeText: "வருமானம்",
+        expenseText: "செலவு",
+        pdfSaved: "PDF வெற்றிகரமாக சேமிக்கப்பட்டது!"
     },
     telugu: {
         settingsTitle: "సెట్టింగ్స్",
@@ -236,7 +527,7 @@ const translations = {
         todayIncomeLabel: "నేటి ఆదాయం",
         todayExpenseLabel: "నేటి ఖర్చు",
         monthIncomeLabel: "నెలవారీ ఆదాయం",
-        monthProfitLabel: "నెలవారీ లాభం",
+        monthProfitLabel: "నెలవారీ బ్యాలెన్స్",
         marketPricesTitle: "📊 నేటి మార్కెట్ ధరలు",
         refreshPricesBtn: "రిఫ్రెష్",
         addEntryTitle: "➕ కొత్త ఎంట్రీ",
@@ -254,7 +545,16 @@ const translations = {
         updateSuccess: "✅ ఎంట్రీ అప్డేట్ చేయబడింది!",
         saveSuccess: "✅ ఎంట్రీ సేవ్ చేయబడింది!",
         noAmountAlert: "⚠️ దయచేసి మొత్తాన్ని నమోదు చేయండి!",
-        clearConfirm: "⚠️ అన్ని ఎంట్రీలను తొలగించాలా?"
+        clearConfirm: "⚠️ అన్ని ఎంట్రీలను తొలగించాలా?",
+        pdfReportBtn: "PDF సేవ్",
+        totalIncomeLabel: "మొత్తం ఆదాయం",
+        totalExpenseLabel: "మొత్తం ఖర్చు",
+        netBalanceLabel: "నికర బ్యాలెన్స్",
+        dateLabel: "తేదీ",
+        typeLabel: "రకం",
+        incomeText: "ఆదాయం",
+        expenseText: "ఖర్చు",
+        pdfSaved: "PDF విజయవంతంగా సేవ్ చేయబడింది!"
     },
     english: {
         settingsTitle: "Settings",
@@ -276,7 +576,7 @@ const translations = {
         todayIncomeLabel: "Today's Income",
         todayExpenseLabel: "Today's Expense",
         monthIncomeLabel: "Month Income",
-        monthProfitLabel: "Month Profit",
+        monthProfitLabel: "Month Balance",
         marketPricesTitle: "📊 Today's Market Prices",
         refreshPricesBtn: "Refresh",
         addEntryTitle: "➕ Add New Entry",
@@ -294,19 +594,30 @@ const translations = {
         updateSuccess: "✅ Entry updated!",
         saveSuccess: "✅ Entry saved!",
         noAmountAlert: "⚠️ Please enter amount!",
-        clearConfirm: "⚠️ Delete all entries?"
+        clearConfirm: "⚠️ Delete all entries?",
+        pdfReportBtn: "Save PDF",
+        totalIncomeLabel: "Total Income",
+        totalExpenseLabel: "Total Expense",
+        netBalanceLabel: "Net Balance",
+        dateLabel: "Date",
+        typeLabel: "Type",
+        incomeText: "Income",
+        expenseText: "Expense",
+        pdfSaved: "PDF saved successfully!"
     }
 };
 
 // ============================================ //
 // LANGUAGE AND UI FUNCTIONS                    //
 // ============================================ //
+
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('app_language', lang);
     applyTranslations();
     let msg = lang === 'tamil' ? '✅ தமிழுக்கு மாற்றப்பட்டது' : (lang === 'telugu' ? '✅ తెలుగుకు మార్చబడింది' : '✅ Switched to English');
     showToast(msg);
+    fetchRealMarketPrices(); // Refresh prices to show translated vegetable names
 }
 
 function setText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
@@ -345,8 +656,9 @@ function applyTranslations() {
     setText('noEntriesText', t.noEntriesText);
     setText('filterBtn', t.filterBtn);
     setText('clearFilterBtn', t.clearFilterBtn);
+    setText('pdfReportBtn', t.pdfReportBtn);
     
-    // Update dropdowns
+    // Update category dropdown
     const categorySelect = document.getElementById('category');
     const entryType = document.getElementById('entryType');
     
@@ -427,6 +739,7 @@ function changeTheme(theme) {
 // ============================================ //
 // DATABASE FUNCTIONS                           //
 // ============================================ //
+
 function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open('FarmersDiaryDB', 1);
@@ -484,6 +797,7 @@ function getEntryById(entryId) {
 // ============================================ //
 // CRUD OPERATIONS                              //
 // ============================================ //
+
 async function saveEntry() {
     const t = translations[currentLanguage];
     const amount = parseFloat(document.getElementById('amount').value);
@@ -561,6 +875,7 @@ async function deleteEntry(entryId) {
 // ============================================ //
 // FILTER FUNCTIONS                             //
 // ============================================ //
+
 async function filterByMonth() {
     const monthInput = document.getElementById('monthFilter');
     currentFilterMonth = monthInput.value;
@@ -669,6 +984,7 @@ async function clearAllData() {
 // ============================================ //
 // INITIALIZATION                               //
 // ============================================ //
+
 async function init() {
     try {
         const savedLanguage = localStorage.getItem('app_language');
@@ -680,17 +996,15 @@ async function init() {
         if (savedTheme) document.body.classList.add(`theme-${savedTheme}`);
         
         loadServerUrl();
+        loadMarketPreference();
         await initDB();
         await loadEntries();
-        
-        // Try to fetch prices (will show error if server not running - NO FAKE DATA)
         await fetchRealMarketPrices();
         
-        // Refresh every 30 minutes
         setInterval(fetchRealMarketPrices, 30 * 60 * 1000);
         applyTranslations();
         
-        console.log('✅ Farmer\'s Diary Ready! Waiting for server connection.');
+        console.log('✅ Farmer\'s Diary Ready!');
     } catch (error) {
         console.error('Init error:', error);
     }
@@ -708,6 +1022,8 @@ window.filterByMonth = filterByMonth;
 window.clearFilter = clearFilter;
 window.clearAllData = clearAllData;
 window.refreshPrices = refreshPrices;
+window.downloadPDFReport = downloadPDFReport;
+window.changeMarket = changeMarket;
 window.updateApiServerUrl = updateApiServerUrl;
 
 init();
