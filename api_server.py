@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from bs4 import BeautifulSoup
 import requests
@@ -8,94 +8,45 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-URL = "https://vegetablemarketprice.com/market/hosur/today"
+MARKET_URLS = {
+    'hosur': 'https://vegetablemarketprice.com/market/hosur/today',
+    'krishnagiri': 'https://vegetablemarketprice.com/market/krishnagiri/today'
+}
 
-def fetch_prices():
-    """Scrape vegetable prices from the webpage"""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
-    
+def fetch_prices(url):
     try:
-        response = requests.get(URL, headers=headers, timeout=10)
-        response.raise_for_status()
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url, headers=headers, timeout=15)
         soup = BeautifulSoup(response.content, 'html.parser')
-        
-        all_rows = soup.find_all('tr')
+        rows = soup.find_all('tr')
         prices = {}
-        
-        for row in all_rows:
-            row_text = row.get_text(separator='|', strip=True)
-            
-            if '₹' in row_text and '|' in row_text:
-                parts = row_text.split('|')
-                parts = [p.strip() for p in parts if p.strip()]
-                
-                if len(parts) >= 3:
-                    vegetable = parts[0]
-                    vegetable = vegetable.split('(')[0].strip()
-                    
-                    wholesale = None
-                    for p in parts[1:]:
-                        if '₹' in p and '-' not in p:
-                            wholesale = p.replace('₹', '').strip()
-                            break
-                    
-                    if vegetable and wholesale:
-                        try:
-                            price_val = int(float(wholesale))
-                            if price_val > 0 and price_val < 5000:
-                                prices[vegetable] = price_val
-                        except:
-                            pass
-        
+        for row in rows:
+            cells = row.find_all('td')
+            if len(cells) >= 3:
+                veg_name = cells[0].get_text(strip=True).split('(')[0].strip()
+                price_text = cells[1].get_text(strip=True).replace('₹', '').strip()
+                try:
+                    price = int(float(price_text))
+                    if price > 0 and price < 5000:
+                        prices[veg_name] = price
+                except: pass
         return prices
-        
     except Exception as e:
-        print(f"Scraping error: {e}")
+        print(f"Scrape error: {e}")
         return {}
 
 @app.route('/api/prices', methods=['GET'])
 def get_prices():
-    """API endpoint for frontend to fetch prices"""
-    try:
-        prices = fetch_prices()
-        
-        if prices and len(prices) > 0:
-            return jsonify({
-                'success': True,
-                'prices': prices,
-                'last_updated': datetime.now().isoformat(),
-                'source': 'Hosur Vegetable Market',
-                'count': len(prices)
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'error': 'Could not fetch prices from market website',
-                'message': 'The vegetable market website may be temporarily unavailable'
-            }), 503
-            
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+    market = request.args.get('market', 'hosur')
+    url = MARKET_URLS.get(market, MARKET_URLS['hosur'])
+    prices = fetch_prices(url)
+    if prices:
+        return jsonify({'success': True, 'prices': prices, 'market': market, 'last_updated': datetime.now().isoformat(), 'count': len(prices)})
+    return jsonify({'success': False, 'error': 'Could not fetch prices'}), 503
 
 @app.route('/api/health', methods=['GET'])
-def health():
-    return jsonify({
-        'status': 'ok',
-        'timestamp': datetime.now().isoformat()
-    })
+def health(): return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    print("=" * 60)
-    print("🚀 HOSUR MARKET PRICE API SERVER")
-    print("=" * 60)
-    print(f"📍 Scraping from: {URL}")
-    print(f"🌐 Server running on port {port}")
-    print("=" * 60)
-    
     app.run(host='0.0.0.0', port=port, debug=False)
