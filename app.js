@@ -127,10 +127,14 @@ async function fetchRealMarketPrices() {
     const container = document.getElementById('marketPricesList');
     const errorDiv = document.getElementById('priceError');
     if (!container) return;
-    container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full">Fetching prices...</div>';
+    
+    container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full"><i class="fas fa-spinner fa-spin mr-2"></i>Fetching prices...</div>';
+    if (errorDiv) errorDiv.classList.add('hidden');
+    
     try {
         const response = await fetch(`${currentServerUrl}/api/prices?market=${currentMarket}`);
         const data = await response.json();
+        
         if (data.success && data.prices && Object.keys(data.prices).length > 0) {
             const entries = Object.entries(data.prices).slice(0, 30);
             container.innerHTML = entries.map(([veg, price]) => `
@@ -139,13 +143,34 @@ async function fetchRealMarketPrices() {
                     <div class="price-name" title="${veg}">${translateVegetable(veg, currentLanguage)}</div>
                 </div>
             `).join('');
-            if (errorDiv) errorDiv.classList.add('hidden');
-        } else throw new Error('No data');
+            
+            const noteEl = document.getElementById('priceNote');
+            if (noteEl) {
+                const marketName = currentMarket === 'hosur' ? 'Hosur' : 'Krishnagiri';
+                if (currentLanguage === 'tamil') noteEl.innerHTML = `📊 ${marketName} சந்தை | ${data.count} பொருட்கள்`;
+                else if (currentLanguage === 'telugu') noteEl.innerHTML = `📊 ${marketName} మార్కెట్ | ${data.count} వస్తువులు`;
+                else noteEl.innerHTML = `📊 ${marketName} Market | ${data.count} items`;
+            }
+        } else {
+            throw new Error('No data received');
+        }
     } catch (error) {
-        console.error(error);
-        if (errorDiv) { errorDiv.classList.remove('hidden'); errorDiv.textContent = `⚠️ Cannot fetch prices. Check server connection. Contact: ${CONTACT.phone}`; }
-        container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full">Unable to load prices</div>';
+        console.error('Fetch error:', error);
+        if (errorDiv) {
+            errorDiv.classList.remove('hidden');
+            errorDiv.innerHTML = `⚠️ Cannot fetch prices. Make sure server is running. Contact: ${CONTACT.phone}`;
+        }
+        container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full">Unable to load prices. Check server connection.</div>';
     }
+}
+
+// Also ensure setMarket function is correct
+function setMarket(market) {
+    currentMarket = market;
+    localStorage.setItem('preferred_market', market);
+    document.getElementById('marketSelect').value = market;
+    fetchRealMarketPrices();
+    showToast(currentLanguage === 'tamil' ? `${market === 'hosur' ? 'ஹொசூர்' : 'கிருஷ்ணகிரி'} சந்தைக்கு மாறியது` : `Switched to ${market === 'hosur' ? 'Hosur' : 'Krishnagiri'} market`);
 }
 
 // ============================================ //
