@@ -1,4 +1,4 @@
-const CACHE_NAME = 'farmers-diary-v1';
+const CACHE_NAME = 'farmers-diary-v2';
 const urlsToCache = ['/', '/index.html', '/app.js', '/manifest.json'];
 
 self.addEventListener('install', event => {
