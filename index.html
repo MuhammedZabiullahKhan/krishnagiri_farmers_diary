@@ -90,16 +90,16 @@
             <div>
                 <h3 class="font-semibold mb-2" id="languageTitle">Language</h3>
                 <div class="flex gap-2">
-                    <button onclick="setLanguage('tamil')" class="btn-outline flex-1 py-2 rounded-full" id="tamilBtn">தமிழ்</button>
-                    <button onclick="setLanguage('telugu')" class="btn-outline flex-1 py-2 rounded-full" id="teluguBtn">తెలుగు</button>
-                    <button onclick="setLanguage('english')" class="btn-outline flex-1 py-2 rounded-full" id="englishBtn">English</button>
+                    <button onclick="setLanguage('tamil')" class="btn-outline flex-1 py-2 rounded-full">தமிழ்</button>
+                    <button onclick="setLanguage('telugu')" class="btn-outline flex-1 py-2 rounded-full">తెలుగు</button>
+                    <button onclick="setLanguage('english')" class="btn-outline flex-1 py-2 rounded-full">English</button>
                 </div>
             </div>
             <div>
                 <h3 class="font-semibold mb-2" id="marketTitle">Market</h3>
                 <div class="flex gap-2">
-                    <button onclick="setMarket('hosur')" class="btn-outline flex-1 py-2 rounded-full" id="hosurBtn">Hosur</button>
-                    <button onclick="setMarket('krishnagiri')" class="btn-outline flex-1 py-2 rounded-full" id="krishnagiriBtn">Krishnagiri</button>
+                    <button onclick="setMarket('hosur')" class="btn-outline flex-1 py-2 rounded-full">Hosur</button>
+                    <button onclick="setMarket('krishnagiri')" class="btn-outline flex-1 py-2 rounded-full">Krishnagiri</button>
                 </div>
             </div>
             <div>
@@ -110,11 +110,6 @@
                     <div onclick="changeTheme('orange')" class="theme-option" style="background: linear-gradient(135deg, #9a3412, #f97316);"></div>
                     <div onclick="changeTheme('dark')" class="theme-option" style="background: #1f2937;"></div>
                 </div>
-            </div>
-            <div>
-                <h3 class="font-semibold mb-2" id="serverTitle">Server</h3>
-                <input type="text" id="serverUrl" class="w-full border rounded-lg p-2 text-sm" value="https://krishnagiri-farmers-diary.onrender.com">
-                <button onclick="updateServerUrl()" class="btn-primary w-full mt-2 py-2 rounded-full text-sm">Save Server URL</button>
             </div>
             <div>
                 <h3 class="font-semibold mb-2" id="dataTitle">Data</h3>
@@ -178,27 +173,27 @@
         <h2 class="font-bold text-gray-800 mb-3" id="addEntryTitle">➕ Add New Entry</h2>
         <div class="grid grid-cols-1 gap-3">
             <select id="entryType" class="border rounded-xl p-3 text-lg">
-                <option value="income">💰 Income / வருமானం / Income</option>
-                <option value="expense">💸 Expense / ఖర్చు / Expense</option>
+                <option value="income">💰 Income / வருமானம் / ఆదాయం</option>
+                <option value="expense">💸 Expense / செலவு / ఖర్చు</option>
             </select>
-            <input type="number" id="amount" class="border rounded-xl p-3 text-lg" placeholder="Amount (₹)" id="amountInput">
+            <input type="number" id="amount" class="border rounded-xl p-3 text-lg" placeholder="Amount (₹)">
             <select id="category" class="border rounded-xl p-3">
-                <option value="Crop Sale">🌾 Crop Sale / పంట అమ్మకం / Crop Sale</option>
-                <option value="Milk Sale">🥛 Milk Sale / పాలు అమ్మకం / Milk Sale</option>
-                <option value="Egg Sale">🥚 Egg Sale / గుడ్లు అమ్మకం / Egg Sale</option>
-                <option value="Fertilizer">🌱 Fertilizer / ఎరువు / Fertilizer</option>
-                <option value="Pesticide">🐛 Pesticide / మందు / Pesticide</option>
-                <option value="Labor">👨‍🌾 Labor / కూలీ / Labor</option>
-                <option value="Transport">🚛 Transport / రవాణా / Transport</option>
-                <option value="Other">📋 Other / ఇతర / Other</option>
+                <option value="Crop Sale">🌾 Crop Sale / பயிர் விற்பனை / పంట అమ్మకం</option>
+                <option value="Milk Sale">🥛 Milk Sale / பால் விற்பனை / పాలు అమ్మకం</option>
+                <option value="Egg Sale">🥚 Egg Sale / முட்டை விற்பனை / గుడ్లు అమ్మకం</option>
+                <option value="Fertilizer">🌱 Fertilizer / உரம் / ఎరువు</option>
+                <option value="Pesticide">🐛 Pesticide / மருந்து / మందు</option>
+                <option value="Labor">👨‍🌾 Labor / கூலி / కూలీ</option>
+                <option value="Transport">🚛 Transport / போக்குவரத்து / రవాణా</option>
+                <option value="Other">📋 Other / மற்றவை / ఇతర</option>
             </select>
             <input type="date" id="entryDate" class="border rounded-xl p-3">
-            <textarea id="notes" rows="2" class="border rounded-xl p-3" placeholder="Notes / గమనికలు / Notes"></textarea>
+            <textarea id="notes" rows="2" class="border rounded-xl p-3" placeholder="Notes / குறிப்புகள் / గమనికలు"></textarea>
             <button onclick="saveEntry()" class="btn-primary py-3 rounded-xl text-white font-bold" id="saveBtnText">💾 Save Entry</button>
         </div>
     </div>
 
-    <!-- Entries List with Individual PDF -->
+    <!-- Entries List -->
     <div class="bg-white rounded-2xl p-4 shadow-lg">
         <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
             <h2 class="font-bold text-gray-800" id="historyTitle">📋 My Entries</h2>
@@ -222,12 +217,11 @@
     function openSettings() { document.getElementById('settingsPanel').classList.add('open'); document.getElementById('settingsOverlay').classList.add('active'); }
     function closeSettings() { document.getElementById('settingsPanel').classList.remove('open'); document.getElementById('settingsOverlay').classList.remove('active'); }
     function changeTheme(theme) { document.body.className = ''; document.body.classList.add(`theme-${theme}`); localStorage.setItem('app_theme', theme); closeSettings(); }
-    function updateServerUrl() { let url = document.getElementById('serverUrl').value; localStorage.setItem('api_server_url', url); if(window.updateApiServerUrl) window.updateApiServerUrl(url); alert('Server URL updated'); }
     
     let savedTheme = localStorage.getItem('app_theme');
     if(savedTheme) document.body.classList.add(`theme-${savedTheme}`);
     
-    window.openSettings = openSettings; window.closeSettings = closeSettings; window.changeTheme = changeTheme; window.updateServerUrl = updateServerUrl;
+    window.openSettings = openSettings; window.closeSettings = closeSettings; window.changeTheme = changeTheme;
 </script>
 </body>
 </html>
