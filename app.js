@@ -1,6 +1,7 @@
 // Krishnagiri Farmer's Diary - Complete Application
 // 100% Translations (Tamil, Telugu, English)
 // Individual PDF per entry, Full CRUD
+// Fixed Server URL - No manual configuration needed
 // Created by Shri Muhammed Zabiullah Khan | PrimeSys Solutions
 
 let db;
@@ -8,7 +9,9 @@ let currentLanguage = 'tamil';
 let editingEntryId = null;
 let currentFilterMonth = null;
 let currentMarket = 'hosur';
-let currentServerUrl = 'https://krishnagiri-farmers-diary.onrender.com';
+
+// Fixed Server URL - Your Render backend
+const currentServerUrl = 'https://krishnagiri-farmers-diary.onrender.com';
 
 const CONTACT = { email: '0gbtechintel@gmail.com', phone: '9087119440' };
 
@@ -39,12 +42,22 @@ const vegetableNames = {
     telugu: {
         "Onion Big": "పెద్ద ఉల్లిపాయ", "Onion Small": "చిన్న ఉల్లిపాయ", "Tomato": "టమోటా",
         "Green Chilli": "పచ్చి మిరపకాయ", "Beetroot": "బీట్రూట్", "Potato": "బంగాళదుంప",
-        "Raw Banana": "అరటికాయ", "Cabbage": "క్యాబేజీ", "Carrot": "క్యారెట్",
-        "Cauliflower": "కాలీఫ్లవర్", "Coconut": "కొబ్బరి", "Brinjal": "వంకాయ",
-        "Garlic": "వెల్లుల్లి", "Ginger": "అల్లం", "Ladies Finger": "బెండకాయ",
-        "Pumpkin": "గుమ్మడికాయ", "Radish": "ముల్లంగి", "Drumsticks": "మునగకాయ",
-        "Lemon": "నిమ్మకాయ", "Mango Raw": "మామిడికాయ", "Mint Leaves": "పుదీనా",
-        "Sweet Potato": "చిలగడదుంప", "Onion Green": "పచ్చి ఉల్లిపాయ", "Coriander Leaves": "కొత్తిమీర"
+        "Raw Banana": "అరటికాయ", "Amaranth Leaves": "తోటకూర", "Amla": "ఉసిరికాయ",
+        "Ash gourd": "బూడిద గుమ్మడికాయ", "Baby Corn": "చిన్న మొక్కజొన్న", "Banana Flower": "అరటి పువ్వు",
+        "Capsicum": "క్యాప్సికమ్", "Bitter Gourd": "కాకరకాయ", "Bottle Gourd": "అనపకాయ",
+        "Butter Beans": "బట్టర్ బీన్స్", "Broad Beans": "చిక్కుడు కాయ", "Cabbage": "క్యాబేజీ",
+        "Carrot": "క్యారెట్", "Cauliflower": "కాలీఫ్లవర్", "Cluster beans": "గోరు చిక్కుడు",
+        "Coconut": "కొబ్బరి", "Colocasia Leaves": "చమగూర", "Colocasia": "చామదుంప",
+        "Coriander Leaves": "కొత్తిమీర", "Corn": "మొక్కజొన్న", "Cucumber": "దోసకాయ",
+        "Curry Leaves": "కరివేపాకు", "Dill Leaves": "సోయా కూర", "Drumsticks": "మునగకాయ",
+        "Brinjal": "వంకాయ", "Brinjal (Big)": "పెద్ద వంకాయ", "Elephant Yam": "పెండలం",
+        "Fenugreek Leaves": "మెంతి కూర", "French Beans": "ఫ్రెంచ్ బీన్స్", "Garlic": "వెల్లుల్లి",
+        "Ginger": "అల్లం", "Onion Green": "పచ్చి ఉల్లిపాయ", "Green Peas": "పచ్చి బటానీలు",
+        "Ivy Gourd": "దొండకాయ", "Lemon": "నిమ్మకాయ", "Mango Raw": "మామిడికాయ",
+        "Mint Leaves": "పుదీనా", "Mushroom": "పుట్టగొడుగు", "Mustard Leaves": "ఆవ ఆకు",
+        "Ladies Finger": "బెండకాయ", "Pumpkin": "గుమ్మడికాయ", "Radish": "ముల్లంగి",
+        "Ridge Gourd": "బీరకాయ", "Shallot": "చిన్న ఉల్లిపాయ", "Snake Gourd": "పొట్లకాయ",
+        "Sorrel Leaves": "పులిచ కూర", "Spinach": "పాలకూర", "Sweet Potato": "చిలగడదుంప"
     },
     english: {}
 };
@@ -61,7 +74,7 @@ function translateVegetable(name, lang) {
 const translations = {
     tamil: {
         settingsTitle: "அமைப்புகள்", languageTitle: "🌐 மொழி", marketTitle: "🏪 சந்தை", themeTitle: "🎨 வண்ண தீம்",
-        serverTitle: "🖥️ சேவர்", dataTitle: "🗑️ தரவு", clearWarning: "எச்சரிக்கை: அனைத்து பதிவுகளும் நிரந்தரமாக நீங்கும்",
+        dataTitle: "🗑️ தரவு", clearWarning: "எச்சரிக்கை: அனைத்து பதிவுகளும் நிரந்தரமாக நீங்கும்",
         settingsBtnText: "அமைப்புகள்", refreshBtnText: "புதுப்பி", filterBtn: "வடிகட்டு", clearFilterBtn: "அழி",
         todayIncomeLabel: "இன்றைய வருமானம்", todayExpenseLabel: "இன்றைய செலவு", monthIncomeLabel: "மாத வருமானம்", monthBalanceLabel: "மாத இருப்பு",
         marketTitleText: "📊 இன்றைய சந்தை விலைகள்", addEntryTitle: "➕ புதிய பதிவு", historyTitle: "📋 என் பதிவுகள்",
@@ -70,12 +83,14 @@ const translations = {
         deleteConfirm: "இந்த பதிவை நீக்க வேண்டுமா?", deleteSuccess: "✅ பதிவு நீக்கப்பட்டது!",
         updateSuccess: "✅ பதிவு புதுப்பிக்கப்பட்டது!", saveSuccess: "✅ பதிவு சேமிக்கப்பட்டது!",
         noAmountAlert: "⚠️ தயவுசெய்து தொகையை உள்ளிடவும்!", clearConfirm: "⚠️ அனைத்து பதிவுகளையும் நீக்க வேண்டுமா?",
-        pdfBtnText: "PDF", pdfSaved: "✅ PDF சேமிக்கப்பட்டது!", pdfTitle: "விவசாயி பதிவு", viewBtn: "காண்க", editBtn: "திருத்து", deleteBtn: "நீக்கு",
-        dateLabel: "தேதி", typeLabel: "வகை", amountLabel: "தொகை", notesLabel: "குறிப்பு", categoryLabel: "வகை"
+        pdfBtnText: "PDF", pdfSaved: "✅ PDF சேமிக்கப்பட்டது!", pdfTitle: "விவசாயி பதிவு",
+        viewBtn: "காண்க", editBtn: "திருத்து", deleteBtn: "நீக்கு",
+        dateLabel: "தேதி", typeLabel: "வகை", amountLabel: "தொகை", notesLabel: "குறிப்பு", categoryLabel: "வகை",
+        incomeText: "வருமானம்", expenseText: "செலவு"
     },
     telugu: {
         settingsTitle: "సెట్టింగ్స్", languageTitle: "🌐 భాష", marketTitle: "🏪 మార్కెట్", themeTitle: "🎨 రంగు",
-        serverTitle: "🖥️ సర్వర్", dataTitle: "🗑️ డేటా", clearWarning: "హెచ్చరిక: అన్ని ఎంట్రీలు శాశ్వతంగా తొలగించబడతాయి",
+        dataTitle: "🗑️ డేటా", clearWarning: "హెచ్చరిక: అన్ని ఎంట్రీలు శాశ్వతంగా తొలగించబడతాయి",
         settingsBtnText: "సెట్టింగ్స్", refreshBtnText: "రిఫ్రెష్", filterBtn: "ఫిల్టర్", clearFilterBtn: "క్లియర్",
         todayIncomeLabel: "నేటి ఆదాయం", todayExpenseLabel: "నేటి ఖర్చు", monthIncomeLabel: "నెలవారీ ఆదాయం", monthBalanceLabel: "నెలవారీ బ్యాలెన్స్",
         marketTitleText: "📊 నేటి మార్కెట్ ధరలు", addEntryTitle: "➕ కొత్త ఎంట్రీ", historyTitle: "📋 నా ఎంట్రీలు",
@@ -86,11 +101,12 @@ const translations = {
         noAmountAlert: "⚠️ దయచేసి మొత్తాన్ని నమోదు చేయండి!", clearConfirm: "⚠️ అన్ని ఎంట్రీలను తొలగించాలా?",
         pdfBtnText: "PDF", pdfSaved: "✅ PDF విజయవంతంగా సేవ్ చేయబడింది!", pdfTitle: "రైతు రికార్డు",
         viewBtn: "చూడండి", editBtn: "సవరించు", deleteBtn: "తొలగించు",
-        dateLabel: "తేదీ", typeLabel: "రకం", amountLabel: "మొత్తం", notesLabel: "గమనిక", categoryLabel: "వర్గం"
+        dateLabel: "తేదీ", typeLabel: "రకం", amountLabel: "మొత్తం", notesLabel: "గమనిక", categoryLabel: "వర్గం",
+        incomeText: "ఆదాయం", expenseText: "ఖర్చు"
     },
     english: {
         settingsTitle: "Settings", languageTitle: "🌐 Language", marketTitle: "🏪 Market", themeTitle: "🎨 Theme",
-        serverTitle: "🖥️ Server", dataTitle: "🗑️ Data", clearWarning: "Warning: Deletes all entries permanently",
+        dataTitle: "🗑️ Data", clearWarning: "Warning: Deletes all entries permanently",
         settingsBtnText: "Settings", refreshBtnText: "Refresh", filterBtn: "Filter", clearFilterBtn: "Clear",
         todayIncomeLabel: "Today's Income", todayExpenseLabel: "Today's Expense", monthIncomeLabel: "Month Income", monthBalanceLabel: "Month Balance",
         marketTitleText: "📊 Today's Market Prices", addEntryTitle: "➕ Add New Entry", historyTitle: "📋 My Entries",
@@ -101,13 +117,14 @@ const translations = {
         noAmountAlert: "⚠️ Please enter amount!", clearConfirm: "⚠️ Delete all entries?",
         pdfBtnText: "PDF", pdfSaved: "✅ PDF saved successfully!", pdfTitle: "Farmer's Record",
         viewBtn: "View", editBtn: "Edit", deleteBtn: "Delete",
-        dateLabel: "Date", typeLabel: "Type", amountLabel: "Amount", notesLabel: "Notes", categoryLabel: "Category"
+        dateLabel: "Date", typeLabel: "Type", amountLabel: "Amount", notesLabel: "Notes", categoryLabel: "Category",
+        incomeText: "Income", expenseText: "Expense"
     }
 };
 
 function applyTranslations() {
     const t = translations[currentLanguage];
-    const ids = ['settingsTitle', 'languageTitle', 'marketTitle', 'themeTitle', 'serverTitle', 'dataTitle', 'clearWarning', 'settingsBtnText', 'refreshBtnText', 'filterBtn', 'clearFilterBtn', 'todayIncomeLabel', 'todayExpenseLabel', 'monthIncomeLabel', 'monthBalanceLabel', 'marketTitleText', 'addEntryTitle', 'historyTitle', 'appTitle', 'subtitleText', 'noEntriesText'];
+    const ids = ['settingsTitle', 'languageTitle', 'marketTitle', 'themeTitle', 'dataTitle', 'clearWarning', 'settingsBtnText', 'refreshBtnText', 'filterBtn', 'clearFilterBtn', 'todayIncomeLabel', 'todayExpenseLabel', 'monthIncomeLabel', 'monthBalanceLabel', 'marketTitleText', 'addEntryTitle', 'historyTitle', 'appTitle', 'subtitleText', 'noEntriesText'];
     ids.forEach(id => { let el = document.getElementById(id); if(el) el.textContent = t[id]; });
     setSaveButtonText();
     loadEntries();
@@ -120,9 +137,21 @@ function setSaveButtonText() {
 
 function showToast(msg) { let toast = document.createElement('div'); toast.className = 'toast'; toast.textContent = msg; document.body.appendChild(toast); setTimeout(() => toast.remove(), 2000); }
 
-function setLanguage(lang) { currentLanguage = lang; localStorage.setItem('app_language', lang); applyTranslations(); fetchRealMarketPrices(); showToast(lang === 'tamil' ? '✅ தமிழுக்கு மாற்றப்பட்டது' : (lang === 'telugu' ? '✅ తెలుగుకు మార్చబడింది' : '✅ Switched to English')); }
+function setLanguage(lang) { 
+    currentLanguage = lang; 
+    localStorage.setItem('app_language', lang); 
+    applyTranslations(); 
+    fetchRealMarketPrices(); 
+    showToast(lang === 'tamil' ? '✅ தமிழுக்கு மாற்றப்பட்டது' : (lang === 'telugu' ? '✅ తెలుగుకు మార్చబడింది' : '✅ Switched to English')); 
+}
 
-function setMarket(market) { currentMarket = market; localStorage.setItem('preferred_market', market); fetchRealMarketPrices(); showToast(currentLanguage === 'tamil' ? `${market === 'hosur' ? 'ஹொசூர்' : 'கிருஷ்ணகிரி'} சந்தைக்கு மாறியது` : `Switched to ${market === 'hosur' ? 'Hosur' : 'Krishnagiri'} market`); }
+function setMarket(market) { 
+    currentMarket = market; 
+    localStorage.setItem('preferred_market', market); 
+    document.getElementById('marketSelect').value = market; 
+    fetchRealMarketPrices(); 
+    showToast(currentLanguage === 'tamil' ? `${market === 'hosur' ? 'ஹொசூர்' : 'கிருஷ்ணகிரி'} சந்தைக்கு மாறியது` : `Switched to ${market === 'hosur' ? 'Hosur' : 'Krishnagiri'} market`); 
+}
 
 // ============================================ //
 // MARKET PRICES (LIVE FETCH)                   //
@@ -131,7 +160,7 @@ async function fetchRealMarketPrices() {
     const container = document.getElementById('marketPricesList');
     const errorDiv = document.getElementById('priceError');
     if (!container) return;
-    container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full">Fetching prices...</div>';
+    container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full"><i class="fas fa-spinner fa-spin mr-2"></i>Fetching prices...</div>';
     if (errorDiv) errorDiv.classList.add('hidden');
     try {
         const response = await fetch(`${currentServerUrl}/api/prices?market=${currentMarket}`);
@@ -237,7 +266,7 @@ async function loadEntries() {
             <div class="flex justify-between items-start">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="${entry.type === 'income' ? 'income-badge' : 'expense-badge'}">${entry.type === 'income' ? '💰 Income' : '💸 Expense'}</span>
+                        <span class="${entry.type === 'income' ? 'income-badge' : 'expense-badge'}">${entry.type === 'income' ? '💰 ' + t.incomeText : '💸 ' + t.expenseText}</span>
                         <span class="font-semibold text-sm">${entry.category}</span>
                         <span class="text-xs text-gray-400">${entry.date}</span>
                     </div>
@@ -262,20 +291,24 @@ async function downloadSinglePDF(entryId) {
     let entry = await getEntryById(entryId);
     if (!entry) return;
     const t = translations[currentLanguage];
+    let typeText = entry.type === 'income' ? t.incomeText : t.expenseText;
+    let typeIcon = entry.type === 'income' ? '💰' : '💸';
     let html = `
         <html><head><meta charset="UTF-8"><title>${t.pdfTitle}</title>
         <style>body{font-family: sans-serif; padding: 20px;} .header{text-align:center; margin-bottom:20px;} .card{border:1px solid #ddd; padding:15px; border-radius:10px;} table{width:100%;} td{padding:8px;} .amount{font-size:24px; font-weight:bold; color:#065f46;}</style>
         </head><body>
         <div class="header"><h2>${t.appTitle}</h2><p>${new Date().toLocaleDateString()}</p></div>
-        <div class="card"><h3>${t.viewBtn} ${t.pdfTitle}</h3>
-        <table><tr><td><strong>${t.dateLabel}:</strong></td><td>${entry.date}</td></tr>
-        <tr><td><strong>${t.typeLabel}:</strong></td><td>${entry.type === 'income' ? '💰 Income' : '💸 Expense'}</td></tr>
-        <tr><td><strong>${t.categoryLabel}:</strong></td><td>${entry.category}</td></tr>
-        <tr><td><strong>${t.amountLabel}:</strong></td><td class="amount">₹${entry.amount.toLocaleString()}</td></tr>
-        ${entry.notes ? `<tr><td><strong>${t.notesLabel}:</strong></td><td>${escapeHtml(entry.notes)}</td></tr>` : ''}
-        </table></div>
-        <p style="margin-top:20px; text-align:center; font-size:12px; color:#999;">Generated by Krishnagiri Farmer's Diary | ${CONTACT.phone}</p>
-        </body></html>`;
+        <div class="card"><h3>${typeIcon} ${typeText} ${t.pdfTitle}</h3>
+        <table>
+            <tr><td style="width:35%"><strong>${t.dateLabel}:</strong></td><td>${entry.date}</td></tr>
+            <tr><td><strong>${t.typeLabel}:</strong></td><td>${typeIcon} ${typeText}</td></tr>
+            <tr><td><strong>${t.categoryLabel}:</strong></td><td>${entry.category}<\/td><\/tr>
+            <tr><td><strong>${t.amountLabel}:<\/strong><\/td><td class="amount">₹${entry.amount.toLocaleString()}<\/td><\/tr>
+            ${entry.notes ? `<tr><td><strong>${t.notesLabel}:<\/strong><\/td><td>${escapeHtml(entry.notes)}<\/td><\/tr>` : ''}
+        <\/table>
+        <\/div>
+        <p style="margin-top:20px; text-align:center; font-size:12px; color:#999;">Generated by Krishnagiri Farmer's Diary | ${CONTACT.phone}<\/p>
+        <\/body><\/html>`;
     let element = document.createElement('div'); element.innerHTML = html; document.body.appendChild(element);
     html2pdf().set({ margin: 0.5, filename: `farmer_record_${entry.id}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => { document.body.removeChild(element); showToast(t.pdfSaved); });
 }
@@ -306,9 +339,6 @@ async function init() {
     if (savedLang && ['tamil','telugu','english'].includes(savedLang)) currentLanguage = savedLang;
     let savedMarket = localStorage.getItem('preferred_market');
     if (savedMarket === 'hosur' || savedMarket === 'krishnagiri') { currentMarket = savedMarket; document.getElementById('marketSelect').value = savedMarket; }
-    let savedServer = localStorage.getItem('api_server_url');
-    if (savedServer) currentServerUrl = savedServer;
-    document.getElementById('serverUrl').value = currentServerUrl;
     await initDB();
     applyTranslations();
     await loadEntries();
@@ -316,8 +346,17 @@ async function init() {
     setInterval(fetchRealMarketPrices, 30 * 60 * 1000);
 }
 
-window.setLanguage = setLanguage; window.setMarket = setMarket; window.fetchRealMarketPrices = fetchRealMarketPrices;
-window.saveEntry = saveEntry; window.editEntry = editEntry; window.deleteEntry = deleteEntry; window.downloadSinglePDF = downloadSinglePDF;
-window.filterByMonth = filterByMonth; window.clearFilter = clearFilter; window.clearAllData = clearAllData;
-window.updateApiServerUrl = (url) => { currentServerUrl = url; localStorage.setItem('api_server_url', url); };
+// Make functions global
+window.setLanguage = setLanguage;
+window.setMarket = setMarket;
+window.fetchRealMarketPrices = fetchRealMarketPrices;
+window.saveEntry = saveEntry;
+window.editEntry = editEntry;
+window.deleteEntry = deleteEntry;
+window.downloadSinglePDF = downloadSinglePDF;
+window.filterByMonth = filterByMonth;
+window.clearFilter = clearFilter;
+window.clearAllData = clearAllData;
+
+// Start the app
 init();
