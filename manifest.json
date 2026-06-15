@@ -1,7 +1,7 @@
 {
   "name": "Krishnagiri Farmer's Diary",
   "short_name": "Farmers Diary",
-  "description": "Offline-first daily income/expense tracker for farmers - Tamil, Telugu, English",
+  "description": "Offline-first daily income/expense tracker for farmers",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
