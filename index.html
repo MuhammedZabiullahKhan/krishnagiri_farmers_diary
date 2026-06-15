@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="manifest" href="manifest.json">
     
+    <!-- html2pdf for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
         * {
             font-family: 'Inter', 'Noto Sans Tamil', 'Noto Sans Telugu', sans-serif;
@@ -78,27 +81,7 @@
         .btn-primary:active {
             transform: scale(0.98);
         }
-        /* Add to your existing styles */
-#marketPricesList {
-    max-height: 400px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-}
-
-#marketPricesList::-webkit-scrollbar {
-    width: 4px;
-}
-
-#marketPricesList::-webkit-scrollbar-track {
-    background: #e5e7eb;
-    border-radius: 10px;
-}
-
-#marketPricesList::-webkit-scrollbar-thumb {
-    background: #10b981;
-    border-radius: 10px;
-}
+        
         .install-btn {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             animation: pulse 2s infinite;
@@ -172,6 +155,26 @@
         }
         body.theme-dark .entry-item:hover { background-color: #4b5563; }
         
+        #marketPricesList {
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        
+        #marketPricesList::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        #marketPricesList::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 10px;
+        }
+        
+        #marketPricesList::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 10px;
+        }
+        
         @media (max-width: 640px) {
             body { padding: 8px; }
             .text-xl { font-size: 1.125rem; }
@@ -203,6 +206,35 @@
         }
         body.theme-dark ::-webkit-scrollbar-track { background: #1f2937; }
         body.theme-dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+        
+        /* PDF Report Styles */
+        .pdf-report {
+            padding: 20px;
+            font-family: 'Inter', 'Noto Sans Tamil', 'Noto Sans Telugu', sans-serif;
+        }
+        .pdf-report h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #065f46;
+        }
+        .pdf-report table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .pdf-report th, .pdf-report td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .pdf-report th {
+            background-color: #f2f2f2;
+        }
+        .pdf-report .total-row {
+            font-weight: bold;
+            background-color: #e8f5e9;
+        }
     </style>
 </head>
 <body>
@@ -241,7 +273,7 @@
                 <h3 class="font-semibold mb-3" id="serverTitle"><i class="fas fa-server mr-2"></i> Server Connection</h3>
                 <div class="bg-gray-50 rounded-lg p-3 mb-2">
                     <p class="text-xs text-gray-600" id="serverHelpText">Run on laptop: python api_server.py</p>
-                    <input type="text" id="serverUrl" class="w-full border rounded-lg p-2 mt-2 text-sm" placeholder="http://localhost:5000" value="http://localhost:5000">
+                    <input type="text" id="serverUrl" class="w-full border rounded-lg p-2 mt-2 text-sm" placeholder="http://localhost:5000" value="https://krishnagiri-farmers-diary.onrender.com">
                     <button onclick="updateServerUrl()" class="mt-2 w-full bg-blue-500 text-white py-1.5 rounded-lg text-sm">Save Server URL</button>
                 </div>
                 <p class="text-xs text-gray-500" id="serverNote">Your laptop must be on same WiFi network and running api_server.py</p>
@@ -259,7 +291,7 @@
             <!-- About Section -->
             <div>
                 <h3 class="font-semibold mb-2" id="aboutTitle"><i class="fas fa-info-circle mr-2"></i> About</h3>
-                <p class="text-sm mb-2" id="aboutText">Track your daily income & expenses</p>
+                <p class="text-sm mb-2" id="aboutText">Track your daily income and expenses</p>
                 <p class="text-sm"><i class="fas fa-envelope"></i> <a href="mailto:0gbtechintel@gmail.com" class="text-blue-500 hover:underline">0gbtechintel@gmail.com</a></p>
                 <p class="text-sm mt-1"><i class="fas fa-phone-alt"></i> <a href="tel:9087119440" class="text-blue-500 hover:underline">9087119440</a></p>
                 <p class="text-xs text-gray-500 mt-3 pt-1 border-t">Created by Shri Muhammed Zabiullah Khan | PrimeSys Solutions</p>
@@ -327,7 +359,7 @@
             </div>
             <div class="bg-white rounded-xl p-3 text-center card-hover animate-slideInRight">
                 <i class="fas fa-coins text-yellow-600 text-xl mb-1"></i>
-                <p class="text-xs text-gray-500" id="monthProfitLabel">Month Profit</p>
+                <p class="text-xs text-gray-500" id="monthProfitLabel">Month Balance</p>
                 <p class="text-xl font-bold" id="monthProfit">₹0</p>
             </div>
         </div>
@@ -339,12 +371,21 @@
                     <i class="fas fa-chart-line text-blue-600 text-xl"></i>
                     <h2 class="text-lg font-bold text-gray-800" id="marketPricesTitle">📊 Today's Market Prices</h2>
                 </div>
-                <button onclick="refreshPrices()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm transition active:scale-95 flex items-center gap-1">
-                    <i class="fas fa-sync-alt text-xs"></i> <span id="refreshPricesBtn">Refresh</span>
-                </button>
+                <div class="flex gap-2">
+                    <select id="marketSelect" onchange="changeMarket()" class="border rounded-lg px-3 py-1.5 text-sm bg-white">
+                        <option value="hosur">🏪 Hosur Market</option>
+                        <option value="krishnagiri">🏪 Krishnagiri Market</option>
+                    </select>
+                    <button onclick="refreshPrices()" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-sm transition">
+                        <i class="fas fa-sync-alt text-xs"></i> <span id="refreshPricesBtn">Refresh</span>
+                    </button>
+                    <button onclick="downloadPDFReport()" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1.5 rounded-lg text-sm transition">
+                        <i class="fas fa-file-pdf"></i> <span id="pdfReportBtn">Save PDF</span>
+                    </button>
+                </div>
             </div>
             <div id="marketPricesList" class="grid grid-cols-2 md:grid-cols-4 gap-2 min-h-[200px]">
-                <div class="text-center text-gray-500 py-4 col-span-2 md:col-span-4"><i class="fas fa-spinner fa-spin mr-2"></i>Waiting for server...</div>
+                <div class="text-center text-gray-500 py-4 col-span-2 md:col-span-4"><i class="fas fa-spinner fa-spin mr-2"></i>Connecting to server...</div>
             </div>
             <div id="priceError" class="hidden mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <p class="text-sm text-red-700" id="priceErrorMessage"></p>
@@ -453,7 +494,7 @@
         if(document.getElementById('entryDate')) document.getElementById('entryDate').value = todayDate;
         if(document.getElementById('monthFilter')) document.getElementById('monthFilter').value = new Date().toISOString().slice(0, 7);
         
-        // PWA Install Handler
+        // PWA Install Handler - Fix 404 error
         let deferredPrompt = null;
         let isAppInstalled = false;
         
