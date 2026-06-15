@@ -1,6 +1,6 @@
 // Krishnagiri Farmer's Diary - Complete Application
 // 100% Translations (Tamil, Telugu, English)
-// Individual PDF per entry (Fixed - opens print dialog to save as PDF)
+// Individual PDF per entry (FIXED - opens new window with print dialog)
 // Full CRUD, Market prices from Hosur & Krishnagiri
 // Created by Shri Muhammed Zabiullah Khan | PrimeSys Solutions
 
@@ -286,7 +286,7 @@ async function loadEntries() {
     updateSummary(entries);
 }
 
-// Individual PDF per entry - FIXED VERSION (uses print dialog)
+// Individual PDF per entry - FIXED VERSION (Opens new window with print dialog)
 async function downloadSinglePDF(entryId) {
     let entry = await getEntryById(entryId);
     if (!entry) return;
@@ -295,9 +295,7 @@ async function downloadSinglePDF(entryId) {
     let typeText = entry.type === 'income' ? t.incomeText : t.expenseText;
     let typeIcon = entry.type === 'income' ? '💰' : '💸';
     
-    // Create a new window for printing/saving as PDF
-    const printWindow = window.open('', '_blank');
-    
+    // Create HTML content for the PDF
     let htmlContent = `
 <!DOCTYPE html>
 <html>
@@ -412,9 +410,6 @@ async function downloadSinglePDF(entryId) {
                 box-shadow: none;
                 border-radius: 0;
             }
-            .no-print {
-                display: none;
-            }
         }
     </style>
 </head>
@@ -441,18 +436,30 @@ async function downloadSinglePDF(entryId) {
             <p>© 2026 PrimeSys Solutions</p>
         </div>
     </div>
-    <script>
-        // Auto print and close
-        window.onload = function() {
-            window.print();
-            setTimeout(function() { window.close(); }, 1000);
-        };
-    <\/script>
 </body>
 </html>`;
     
+    // Open a new window and write the content
+    const printWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+    if (!printWindow) {
+        showToast('Please allow pop-ups to save PDF');
+        return;
+    }
+    
     printWindow.document.write(htmlContent);
     printWindow.document.close();
+    
+    // Trigger print after content loads
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+    
+    // Fallback: trigger print after a short delay
+    setTimeout(function() {
+        if (printWindow && !printWindow.closed) {
+            printWindow.print();
+        }
+    }, 500);
 }
 
 function updateSummary(entries) {
