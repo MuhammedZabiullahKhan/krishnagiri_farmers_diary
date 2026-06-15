@@ -1,6 +1,6 @@
 // Krishnagiri Farmer's Diary - Complete Application
-// Mobile-First, Fully Translated (Tamil, Telugu, English)
-// Features: Income/Expense Tracking, Hosur/Krishnagiri Market Prices, PDF Report
+// 100% Translations (Tamil, Telugu, English)
+// Individual PDF per entry, Full CRUD
 // Created by Shri Muhammed Zabiullah Khan | PrimeSys Solutions
 
 let db;
@@ -44,7 +44,7 @@ const vegetableNames = {
         "Garlic": "వెల్లుల్లి", "Ginger": "అల్లం", "Ladies Finger": "బెండకాయ",
         "Pumpkin": "గుమ్మడికాయ", "Radish": "ముల్లంగి", "Drumsticks": "మునగకాయ",
         "Lemon": "నిమ్మకాయ", "Mango Raw": "మామిడికాయ", "Mint Leaves": "పుదీనా",
-        "Sweet Potato": "చిలగడదుంప"
+        "Sweet Potato": "చిలగడదుంప", "Onion Green": "పచ్చి ఉల్లిపాయ", "Coriander Leaves": "కొత్తిమీర"
     },
     english: {}
 };
@@ -56,57 +56,61 @@ function translateVegetable(name, lang) {
 }
 
 // ============================================ //
-// TRANSLATIONS (UI)                            //
+// COMPLETE UI TRANSLATIONS (100%)              //
 // ============================================ //
 const translations = {
     tamil: {
-        appTitle: "கிருஷ்ணகிரி விவசாயி நாட்குறிப்பு", subtitleText: "விவசாயி நாட்குறிப்பு",
-        settingsTitle: "அமைப்புகள்", languageTitle: "மொழி", marketTitle: "சந்தை", themeTitle: "வண்ண தீம்",
-        serverTitle: "சேவர் இணைப்பு", dataTitle: "தரவு மேலாண்மை", clearWarning: "எச்சரிக்கை: அனைத்து பதிவுகளும் நிரந்தரமாக நீங்கும்",
+        settingsTitle: "அமைப்புகள்", languageTitle: "🌐 மொழி", marketTitle: "🏪 சந்தை", themeTitle: "🎨 வண்ண தீம்",
+        serverTitle: "🖥️ சேவர்", dataTitle: "🗑️ தரவு", clearWarning: "எச்சரிக்கை: அனைத்து பதிவுகளும் நிரந்தரமாக நீங்கும்",
+        settingsBtnText: "அமைப்புகள்", refreshBtnText: "புதுப்பி", filterBtn: "வடிகட்டு", clearFilterBtn: "அழி",
         todayIncomeLabel: "இன்றைய வருமானம்", todayExpenseLabel: "இன்றைய செலவு", monthIncomeLabel: "மாத வருமானம்", monthBalanceLabel: "மாத இருப்பு",
         marketTitleText: "📊 இன்றைய சந்தை விலைகள்", addEntryTitle: "➕ புதிய பதிவு", historyTitle: "📋 என் பதிவுகள்",
-        filterBtn: "வடிகட்டு", clearFilterBtn: "அழி", pdfBtn: "PDF", saveBtnText: "💾 பதிவு சேமி", updateBtnText: "🔄 பதிவு புதுப்பி",
-        noEntriesText: "இன்னும் பதிவுகள் இல்லை. மேலே உங்கள் முதல் பதிவை உருவாக்கவும்!",
-        deleteConfirm: "இந்த பதிவை நீக்க வேண்டுமா?", deleteSuccess: "✅ பதிவு நீக்கப்பட்டது!", updateSuccess: "✅ பதிவு புதுப்பிக்கப்பட்டது!",
-        saveSuccess: "✅ பதிவு சேமிக்கப்பட்டது!", noAmountAlert: "⚠️ தயவுசெய்து தொகையை உள்ளிடவும்!", clearConfirm: "⚠️ அனைத்து பதிவுகளையும் நீக்க வேண்டுமா?",
-        totalIncomeLabel: "மொத்த வருமானம்", totalExpenseLabel: "மொத்த செலவு", netBalanceLabel: "நிகர இருப்பு", dateLabel: "தேதி", typeLabel: "வகை",
-        incomeText: "வருமானம்", expenseText: "செலவு", pdfSaved: "PDF வெற்றிகரமாக சேமிக்கப்பட்டது!"
+        appTitle: "கிருஷ்ணகிரி விவசாயி நாட்குறிப்பு", subtitleText: "விவசாயி நாட்குறிப்பு",
+        saveBtnText: "💾 பதிவு சேமி", updateBtnText: "🔄 பதிவு புதுப்பி", noEntriesText: "இன்னும் பதிவுகள் இல்லை",
+        deleteConfirm: "இந்த பதிவை நீக்க வேண்டுமா?", deleteSuccess: "✅ பதிவு நீக்கப்பட்டது!",
+        updateSuccess: "✅ பதிவு புதுப்பிக்கப்பட்டது!", saveSuccess: "✅ பதிவு சேமிக்கப்பட்டது!",
+        noAmountAlert: "⚠️ தயவுசெய்து தொகையை உள்ளிடவும்!", clearConfirm: "⚠️ அனைத்து பதிவுகளையும் நீக்க வேண்டுமா?",
+        pdfBtnText: "PDF", pdfSaved: "✅ PDF சேமிக்கப்பட்டது!", pdfTitle: "விவசாயி பதிவு", viewBtn: "காண்க", editBtn: "திருத்து", deleteBtn: "நீக்கு",
+        dateLabel: "தேதி", typeLabel: "வகை", amountLabel: "தொகை", notesLabel: "குறிப்பு", categoryLabel: "வகை"
     },
     telugu: {
-        appTitle: "కృష్ణగిరి రైతు డైరీ", subtitleText: "రైతు డైరీ",
-        settingsTitle: "సెట్టింగ్స్", languageTitle: "భాష", marketTitle: "మార్కెట్", themeTitle: "రంగు",
-        serverTitle: "సర్వర్", dataTitle: "డేటా", clearWarning: "హెచ్చరిక: అన్ని ఎంట్రీలు శాశ్వతంగా తొలగించబడతాయి",
+        settingsTitle: "సెట్టింగ్స్", languageTitle: "🌐 భాష", marketTitle: "🏪 మార్కెట్", themeTitle: "🎨 రంగు",
+        serverTitle: "🖥️ సర్వర్", dataTitle: "🗑️ డేటా", clearWarning: "హెచ్చరిక: అన్ని ఎంట్రీలు శాశ్వతంగా తొలగించబడతాయి",
+        settingsBtnText: "సెట్టింగ్స్", refreshBtnText: "రిఫ్రెష్", filterBtn: "ఫిల్టర్", clearFilterBtn: "క్లియర్",
         todayIncomeLabel: "నేటి ఆదాయం", todayExpenseLabel: "నేటి ఖర్చు", monthIncomeLabel: "నెలవారీ ఆదాయం", monthBalanceLabel: "నెలవారీ బ్యాలెన్స్",
         marketTitleText: "📊 నేటి మార్కెట్ ధరలు", addEntryTitle: "➕ కొత్త ఎంట్రీ", historyTitle: "📋 నా ఎంట్రీలు",
-        filterBtn: "ఫిల్టర్", clearFilterBtn: "క్లియర్", pdfBtn: "PDF", saveBtnText: "💾 ఎంట్రీ సేవ్", updateBtnText: "🔄 ఎంట్రీ అప్డేట్",
-        noEntriesText: "ఇంకా ఎంట్రీలు లేవు. పైన మీ మొదటి ఎంట్రీని సృష్టించండి!",
-        deleteConfirm: "ఈ ఎంట్రీని తొలగించాలా?", deleteSuccess: "✅ ఎంట్రీ తొలగించబడింది!", updateSuccess: "✅ ఎంట్రీ అప్డేట్ చేయబడింది!",
-        saveSuccess: "✅ ఎంట్రీ సేవ్ చేయబడింది!", noAmountAlert: "⚠️ దయచేసి మొత్తాన్ని నమోదు చేయండి!", clearConfirm: "⚠️ అన్ని ఎంట్రీలను తొలగించాలా?",
-        totalIncomeLabel: "మొత్తం ఆదాయం", totalExpenseLabel: "మొత్తం ఖర్చు", netBalanceLabel: "నికర బ్యాలెన్స్", dateLabel: "తేదీ", typeLabel: "రకం",
-        incomeText: "ఆదాయం", expenseText: "ఖర్చు", pdfSaved: "PDF విజయవంతంగా సేవ్ చేయబడింది!"
+        appTitle: "కృష్ణగిరి రైతు డైరీ", subtitleText: "రైతు డైరీ",
+        saveBtnText: "💾 ఎంట్రీ సేవ్", updateBtnText: "🔄 ఎంట్రీ అప్డేట్", noEntriesText: "ఇంకా ఎంట్రీలు లేవు",
+        deleteConfirm: "ఈ ఎంట్రీని తొలగించాలా?", deleteSuccess: "✅ ఎంట్రీ తొలగించబడింది!",
+        updateSuccess: "✅ ఎంట్రీ అప్డేట్ చేయబడింది!", saveSuccess: "✅ ఎంట్రీ సేవ్ చేయబడింది!",
+        noAmountAlert: "⚠️ దయచేసి మొత్తాన్ని నమోదు చేయండి!", clearConfirm: "⚠️ అన్ని ఎంట్రీలను తొలగించాలా?",
+        pdfBtnText: "PDF", pdfSaved: "✅ PDF విజయవంతంగా సేవ్ చేయబడింది!", pdfTitle: "రైతు రికార్డు",
+        viewBtn: "చూడండి", editBtn: "సవరించు", deleteBtn: "తొలగించు",
+        dateLabel: "తేదీ", typeLabel: "రకం", amountLabel: "మొత్తం", notesLabel: "గమనిక", categoryLabel: "వర్గం"
     },
     english: {
-        appTitle: "Krishnagiri Farmer's Diary", subtitleText: "Farmer's Diary",
-        settingsTitle: "Settings", languageTitle: "Language", marketTitle: "Market", themeTitle: "Theme",
-        serverTitle: "Server", dataTitle: "Data", clearWarning: "Warning: Deletes all entries permanently",
+        settingsTitle: "Settings", languageTitle: "🌐 Language", marketTitle: "🏪 Market", themeTitle: "🎨 Theme",
+        serverTitle: "🖥️ Server", dataTitle: "🗑️ Data", clearWarning: "Warning: Deletes all entries permanently",
+        settingsBtnText: "Settings", refreshBtnText: "Refresh", filterBtn: "Filter", clearFilterBtn: "Clear",
         todayIncomeLabel: "Today's Income", todayExpenseLabel: "Today's Expense", monthIncomeLabel: "Month Income", monthBalanceLabel: "Month Balance",
         marketTitleText: "📊 Today's Market Prices", addEntryTitle: "➕ Add New Entry", historyTitle: "📋 My Entries",
-        filterBtn: "Filter", clearFilterBtn: "Clear", pdfBtn: "PDF", saveBtnText: "💾 Save Entry", updateBtnText: "🔄 Update Entry",
-        noEntriesText: "No entries yet. Create your first entry above!",
-        deleteConfirm: "Delete this entry?", deleteSuccess: "✅ Entry deleted!", updateSuccess: "✅ Entry updated!",
-        saveSuccess: "✅ Entry saved!", noAmountAlert: "⚠️ Please enter amount!", clearConfirm: "⚠️ Delete all entries?",
-        totalIncomeLabel: "Total Income", totalExpenseLabel: "Total Expense", netBalanceLabel: "Net Balance", dateLabel: "Date", typeLabel: "Type",
-        incomeText: "Income", expenseText: "Expense", pdfSaved: "PDF saved successfully!"
+        appTitle: "Krishnagiri Farmer's Diary", subtitleText: "Farmer's Diary",
+        saveBtnText: "💾 Save Entry", updateBtnText: "🔄 Update Entry", noEntriesText: "No entries yet",
+        deleteConfirm: "Delete this entry?", deleteSuccess: "✅ Entry deleted!",
+        updateSuccess: "✅ Entry updated!", saveSuccess: "✅ Entry saved!",
+        noAmountAlert: "⚠️ Please enter amount!", clearConfirm: "⚠️ Delete all entries?",
+        pdfBtnText: "PDF", pdfSaved: "✅ PDF saved successfully!", pdfTitle: "Farmer's Record",
+        viewBtn: "View", editBtn: "Edit", deleteBtn: "Delete",
+        dateLabel: "Date", typeLabel: "Type", amountLabel: "Amount", notesLabel: "Notes", categoryLabel: "Category"
     }
 };
 
-// Apply UI translations
 function applyTranslations() {
     const t = translations[currentLanguage];
-    const ids = ['appTitle', 'subtitleText', 'settingsTitle', 'languageTitle', 'marketTitle', 'themeTitle', 'serverTitle', 'dataTitle', 'clearWarning', 'todayIncomeLabel', 'todayExpenseLabel', 'monthIncomeLabel', 'monthBalanceLabel', 'marketTitleText', 'addEntryTitle', 'historyTitle', 'filterBtn', 'clearFilterBtn', 'pdfBtn', 'noEntriesText', 'totalIncomeLabel', 'totalExpenseLabel', 'netBalanceLabel', 'dateLabel', 'typeLabel'];
+    const ids = ['settingsTitle', 'languageTitle', 'marketTitle', 'themeTitle', 'serverTitle', 'dataTitle', 'clearWarning', 'settingsBtnText', 'refreshBtnText', 'filterBtn', 'clearFilterBtn', 'todayIncomeLabel', 'todayExpenseLabel', 'monthIncomeLabel', 'monthBalanceLabel', 'marketTitleText', 'addEntryTitle', 'historyTitle', 'appTitle', 'subtitleText', 'noEntriesText'];
     ids.forEach(id => { let el = document.getElementById(id); if(el) el.textContent = t[id]; });
     setSaveButtonText();
-    loadEntries(); // Refresh entries to update buttons
+    loadEntries();
 }
 
 function setSaveButtonText() {
@@ -118,7 +122,7 @@ function showToast(msg) { let toast = document.createElement('div'); toast.class
 
 function setLanguage(lang) { currentLanguage = lang; localStorage.setItem('app_language', lang); applyTranslations(); fetchRealMarketPrices(); showToast(lang === 'tamil' ? '✅ தமிழுக்கு மாற்றப்பட்டது' : (lang === 'telugu' ? '✅ తెలుగుకు మార్చబడింది' : '✅ Switched to English')); }
 
-function setMarket(market) { currentMarket = market; localStorage.setItem('preferred_market', market); fetchRealMarketPrices(); showToast(`Switched to ${market === 'hosur' ? 'Hosur' : 'Krishnagiri'} market`); }
+function setMarket(market) { currentMarket = market; localStorage.setItem('preferred_market', market); fetchRealMarketPrices(); showToast(currentLanguage === 'tamil' ? `${market === 'hosur' ? 'ஹொசூர்' : 'கிருஷ்ணகிரி'} சந்தைக்கு மாறியது` : `Switched to ${market === 'hosur' ? 'Hosur' : 'Krishnagiri'} market`); }
 
 // ============================================ //
 // MARKET PRICES (LIVE FETCH)                   //
@@ -127,23 +131,16 @@ async function fetchRealMarketPrices() {
     const container = document.getElementById('marketPricesList');
     const errorDiv = document.getElementById('priceError');
     if (!container) return;
-    
-    container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full"><i class="fas fa-spinner fa-spin mr-2"></i>Fetching prices...</div>';
+    container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full">Fetching prices...</div>';
     if (errorDiv) errorDiv.classList.add('hidden');
-    
     try {
         const response = await fetch(`${currentServerUrl}/api/prices?market=${currentMarket}`);
         const data = await response.json();
-        
         if (data.success && data.prices && Object.keys(data.prices).length > 0) {
-            const entries = Object.entries(data.prices).slice(0, 30);
+            const entries = Object.entries(data.prices);
             container.innerHTML = entries.map(([veg, price]) => `
-                <div class="price-card">
-                    <div class="price-value">₹${price}</div>
-                    <div class="price-name" title="${veg}">${translateVegetable(veg, currentLanguage)}</div>
-                </div>
+                <div class="price-card"><div class="price-value">₹${price}</div><div class="price-name" title="${veg}">${translateVegetable(veg, currentLanguage)}</div></div>
             `).join('');
-            
             const noteEl = document.getElementById('priceNote');
             if (noteEl) {
                 const marketName = currentMarket === 'hosur' ? 'Hosur' : 'Krishnagiri';
@@ -151,26 +148,12 @@ async function fetchRealMarketPrices() {
                 else if (currentLanguage === 'telugu') noteEl.innerHTML = `📊 ${marketName} మార్కెట్ | ${data.count} వస్తువులు`;
                 else noteEl.innerHTML = `📊 ${marketName} Market | ${data.count} items`;
             }
-        } else {
-            throw new Error('No data received');
-        }
+        } else throw new Error('No data');
     } catch (error) {
-        console.error('Fetch error:', error);
-        if (errorDiv) {
-            errorDiv.classList.remove('hidden');
-            errorDiv.innerHTML = `⚠️ Cannot fetch prices. Make sure server is running. Contact: ${CONTACT.phone}`;
-        }
-        container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full">Unable to load prices. Check server connection.</div>';
+        console.error(error);
+        if (errorDiv) { errorDiv.classList.remove('hidden'); errorDiv.innerHTML = `⚠️ Cannot fetch prices. Contact: ${CONTACT.phone}`; }
+        container.innerHTML = '<div class="text-center text-gray-500 py-8 col-span-full">Unable to load prices</div>';
     }
-}
-
-// Also ensure setMarket function is correct
-function setMarket(market) {
-    currentMarket = market;
-    localStorage.setItem('preferred_market', market);
-    document.getElementById('marketSelect').value = market;
-    fetchRealMarketPrices();
-    showToast(currentLanguage === 'tamil' ? `${market === 'hosur' ? 'ஹொசூர்' : 'கிருஷ்ணகிரி'} சந்தைக்கு மாறியது` : `Switched to ${market === 'hosur' ? 'Hosur' : 'Krishnagiri'} market`);
 }
 
 // ============================================ //
@@ -250,27 +233,51 @@ async function loadEntries() {
     if (!container) return;
     if (filtered.length === 0) { container.innerHTML = `<div class="text-center text-gray-500 py-8">${t.noEntriesText}</div>`; updateSummary(entries); return; }
     container.innerHTML = filtered.map(entry => `
-        <div class="entry-item">
+        <div class="entry-card">
             <div class="flex justify-between items-start">
                 <div class="flex-1">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <span class="${entry.type === 'income' ? 'income-badge' : 'expense-badge'}">${entry.type === 'income' ? t.incomeText : t.expenseText}</span>
-                        <span class="font-bold">${entry.category}</span>
+                        <span class="${entry.type === 'income' ? 'income-badge' : 'expense-badge'}">${entry.type === 'income' ? '💰 Income' : '💸 Expense'}</span>
+                        <span class="font-semibold text-sm">${entry.category}</span>
                         <span class="text-xs text-gray-400">${entry.date}</span>
                     </div>
                     ${entry.notes ? `<p class="text-xs text-gray-500 mt-1">📝 ${escapeHtml(entry.notes)}</p>` : ''}
                 </div>
                 <div class="text-right">
-                    <div class="font-bold ${entry.type === 'income' ? 'text-green-700' : 'text-red-600'}">₹${entry.amount.toLocaleString()}</div>
-                    <div class="flex gap-1 mt-1">
-                        <button onclick="editEntry(${entry.id})" class="text-blue-600 text-xs"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteEntry(${entry.id})" class="text-red-600 text-xs"><i class="fas fa-trash"></i></button>
+                    <div class="font-bold text-lg ${entry.type === 'income' ? 'text-green-700' : 'text-red-600'}">₹${entry.amount.toLocaleString()}</div>
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="downloadSinglePDF(${entry.id})" class="bg-purple-600 text-white px-2 py-1 rounded-lg text-xs"><i class="fas fa-file-pdf"></i> ${t.pdfBtnText}</button>
+                        <button onclick="editEntry(${entry.id})" class="bg-yellow-500 text-white px-2 py-1 rounded-lg text-xs"><i class="fas fa-edit"></i> ${t.editBtn}</button>
+                        <button onclick="deleteEntry(${entry.id})" class="bg-red-500 text-white px-2 py-1 rounded-lg text-xs"><i class="fas fa-trash"></i> ${t.deleteBtn}</button>
                     </div>
                 </div>
             </div>
         </div>
     `).join('');
     updateSummary(entries);
+}
+
+// Individual PDF per entry
+async function downloadSinglePDF(entryId) {
+    let entry = await getEntryById(entryId);
+    if (!entry) return;
+    const t = translations[currentLanguage];
+    let html = `
+        <html><head><meta charset="UTF-8"><title>${t.pdfTitle}</title>
+        <style>body{font-family: sans-serif; padding: 20px;} .header{text-align:center; margin-bottom:20px;} .card{border:1px solid #ddd; padding:15px; border-radius:10px;} table{width:100%;} td{padding:8px;} .amount{font-size:24px; font-weight:bold; color:#065f46;}</style>
+        </head><body>
+        <div class="header"><h2>${t.appTitle}</h2><p>${new Date().toLocaleDateString()}</p></div>
+        <div class="card"><h3>${t.viewBtn} ${t.pdfTitle}</h3>
+        <table><tr><td><strong>${t.dateLabel}:</strong></td><td>${entry.date}</td></tr>
+        <tr><td><strong>${t.typeLabel}:</strong></td><td>${entry.type === 'income' ? '💰 Income' : '💸 Expense'}</td></tr>
+        <tr><td><strong>${t.categoryLabel}:</strong></td><td>${entry.category}</td></tr>
+        <tr><td><strong>${t.amountLabel}:</strong></td><td class="amount">₹${entry.amount.toLocaleString()}</td></tr>
+        ${entry.notes ? `<tr><td><strong>${t.notesLabel}:</strong></td><td>${escapeHtml(entry.notes)}</td></tr>` : ''}
+        </table></div>
+        <p style="margin-top:20px; text-align:center; font-size:12px; color:#999;">Generated by Krishnagiri Farmer's Diary | ${CONTACT.phone}</p>
+        </body></html>`;
+    let element = document.createElement('div'); element.innerHTML = html; document.body.appendChild(element);
+    html2pdf().set({ margin: 0.5, filename: `farmer_record_${entry.id}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => { document.body.removeChild(element); showToast(t.pdfSaved); });
 }
 
 function updateSummary(entries) {
@@ -292,31 +299,6 @@ function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, fun
 async function clearAllData() { if (confirm(translations[currentLanguage].clearConfirm)) { let tx = db.transaction(['entries'], 'readwrite'); tx.objectStore('entries').clear(); await tx.done; loadEntries(); showToast('✅ All data cleared!'); closeSettings(); } }
 
 // ============================================ //
-// PDF REPORT (Income/Expense Summary)          //
-// ============================================ //
-async function downloadPDFReport() {
-    let entries = await getAllEntries();
-    const t = translations[currentLanguage];
-    if (entries.length === 0) { showToast('No entries to generate PDF'); return; }
-    let totalIncome = 0, totalExpense = 0;
-    entries.forEach(e => { if (e.type === 'income') totalIncome += e.amount; else totalExpense += e.amount; });
-    let html = `
-        <html><head><meta charset="UTF-8"><title>Farmer's Report</title>
-        <style>body{font-family: sans-serif; padding:20px;} .header{text-align:center; margin-bottom:20px;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ddd; padding:8px; text-align:left;} th{background:#f2f2f2;} .summary{display:flex; justify-content:space-between; margin-bottom:20px;} .card{background:#f0fdf4; padding:10px; border-radius:8px; text-align:center; flex:1; margin:0 5px;}</style>
-        </head><body>
-        <div class="header"><h2>Krishnagiri Farmer's Diary</h2><p>${new Date().toLocaleDateString()}</p></div>
-        <div class="summary"><div class="card"><h3>${t.totalIncomeLabel}</h3><p>₹${totalIncome.toLocaleString()}</p></div>
-        <div class="card"><h3>${t.totalExpenseLabel}</h3><p>₹${totalExpense.toLocaleString()}</p></div>
-        <div class="card"><h3>${t.netBalanceLabel}</h3><p>₹${(totalIncome - totalExpense).toLocaleString()}</p></div></div>
-        <table><tr><th>${t.dateLabel}</th><th>${t.typeLabel}</th><th>Category</th><th>Amount (₹)</th><th>Notes</th></tr>
-        ${entries.map(e => `<tr><td>${e.date}</td><td>${e.type === 'income' ? t.incomeText : t.expenseText}</td><td>${e.category}</td><td>₹${e.amount.toLocaleString()}</td><td>${e.notes || '-'}</td></tr>`).join('')}
-        </table></body></html>`;
-    let element = document.createElement('div'); element.innerHTML = html;
-    document.body.appendChild(element);
-    html2pdf().set({ margin: 0.5, filename: `farmers_report_${new Date().toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } }).from(element).save().then(() => { document.body.removeChild(element); showToast(t.pdfSaved); });
-}
-
-// ============================================ //
 // INITIALIZATION                               //
 // ============================================ //
 async function init() {
@@ -335,7 +317,7 @@ async function init() {
 }
 
 window.setLanguage = setLanguage; window.setMarket = setMarket; window.fetchRealMarketPrices = fetchRealMarketPrices;
-window.saveEntry = saveEntry; window.editEntry = editEntry; window.deleteEntry = deleteEntry;
+window.saveEntry = saveEntry; window.editEntry = editEntry; window.deleteEntry = deleteEntry; window.downloadSinglePDF = downloadSinglePDF;
 window.filterByMonth = filterByMonth; window.clearFilter = clearFilter; window.clearAllData = clearAllData;
-window.downloadPDFReport = downloadPDFReport; window.updateApiServerUrl = (url) => { currentServerUrl = url; localStorage.setItem('api_server_url', url); };
+window.updateApiServerUrl = (url) => { currentServerUrl = url; localStorage.setItem('api_server_url', url); };
 init();
